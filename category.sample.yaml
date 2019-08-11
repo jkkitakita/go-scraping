@@ -1,0 +1,12 @@
+domain: http://example.com
+category:
+  name: お酒
+  path: /category/
+pagination:
+  per_page:
+    suffix: ?per_page=
+    number: 40
+  page:
+    suffix: &page=
+    offset: 1
+    limit: 100
