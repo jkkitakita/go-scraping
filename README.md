@@ -6,11 +6,11 @@
 
 ## Getting Started
 
-1. Copy `category.sample.yaml` to `category.yaml`
+1. Copy `./config/config.sample.yaml` to `./config/config.yaml`
 ```bash
-cp category.sample.yaml category.yaml
+cp ./config/config.sample.yaml ./config/config.yaml
 ```
-2. Edit `category.yaml`
+2. Edit `./config/config.yaml`
 3. Setup golang
 ```
 make deps

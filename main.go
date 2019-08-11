@@ -8,12 +8,11 @@ import (
 	"net/http"
 	"os"
 	"reflect"
-	"strings"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-yaml/yaml"
 	"github.com/gocarina/gocsv"
+	"github.com/jkkitakita/go-scraping/config"
 	"github.com/jkkitakita/go-scraping/domain"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
@@ -49,27 +48,29 @@ func Scrape(site domain.Site, url string) domain.SakeEntity {
 	entity.URL = url
 	entity.Category = site.Category.Name
 
-	doc.Find(".spec .name").Each(func(i int, s *goquery.Selection) {
+	doc.Find(site.Element.Name).Each(func(i int, s *goquery.Selection) {
 		entity.Name = s.Text()
 	})
 
-	doc.Find(".nomal_price .price").Each(func(i int, s *goquery.Selection) {
+	doc.Find(site.Element.Price).Each(func(i int, s *goquery.Selection) {
 		entity.Price = s.Text()
 	})
 
-	getValues(doc, &entity)
+	getDetails(doc, site.Element.Detail, &entity)
 
 	return entity
 }
 
-func getValues(doc *goquery.Document, entity *domain.SakeEntity) {
-	doc.Find(".deco_table tbody tr").Each(func(i int, s *goquery.Selection) {
+func getDetails(doc *goquery.Document, detail domain.Detail, entity *domain.SakeEntity) {
+	doc.Find(detail.Table).Each(func(i int, s *goquery.Selection) {
 		t := reflect.TypeOf(domain.SakeEntity{})
 		for i := 0; i < t.NumField(); i++ {
 			field := t.Field(i)
 			j := field.Tag.Get("csv")
-			if j == s.Find("th").Text() {
-				reflect.ValueOf(entity).Elem().FieldByName(field.Name).SetString(strings.TrimSpace(s.Find("td").Text()))
+			if j == s.Find(detail.Column).Text() {
+				reflect.ValueOf(entity).Elem().
+					FieldByName(field.Name).
+					SetString(s.Find(detail.Value).Text())
 			}
 		}
 	})
@@ -121,7 +122,7 @@ func main() {
 	var site domain.Site
 
 	// test.yamlを []byte として読み込みます。
-	buf, err := ioutil.ReadFile("./category.yaml")
+	buf, err := ioutil.ReadFile("./config/config.yaml")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -142,8 +143,7 @@ func main() {
 		entities = append(entities, Scrape(site, url))
 	}
 
-	filename := fmt.Sprintf(`%+v_%+v.csv`, site.Category.Name, time.Now().Format("2006-01-02"))
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile(config.CsvFilename(site.Category.Name), os.O_WRONLY|os.O_CREATE, 0600)
 	defer file.Close()
 	gocsv.MarshalFile(&entities, file)
 }

@@ -1,7 +1,15 @@
+output_dir:
 domain: http://example.com
 category:
   name: お酒
   path: /category/
+element:
+  name: ".name"
+  price: ".price"
+  detail:
+    table: ".deco_table tbody tr"
+    column: "th"
+    value: "td"
 pagination:
   per_page:
     suffix: ?per_page=

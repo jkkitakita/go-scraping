@@ -6,6 +6,7 @@ type (
 		Domain     string     `yaml:"domain"`
 		Category   Category   `yaml:"category"`
 		Pagination Pagination `yaml:"pagination"`
+		Element    Element    `yaml:"element"`
 	}
 
 	// Category is a struct of a category of the site to be scraped
@@ -18,6 +19,20 @@ type (
 	Pagination struct {
 		PerPage PerPage `yaml:"per_page"`
 		Page    Page    `yaml:"page"`
+	}
+
+	// Element is a struct of elements of the site to be scraped
+	Element struct {
+		Name   string `yaml:"name"`
+		Price  string `yaml:"price"`
+		Detail Detail `yaml:"detail"`
+	}
+
+	// Detail is a struct of elements of the site to be scraped
+	Detail struct {
+		Table  string `yaml:"table"`
+		Column string `yaml:"column"`
+		Value  string `yaml:"value"`
 	}
 
 	// PerPage is a struct of per page of the site to be scraped

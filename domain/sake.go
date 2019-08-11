@@ -1,7 +1,7 @@
 package domain
 
 type (
-	// SakeEntity is sake struct
+	// SakeEntity is a sake struct
 	SakeEntity struct {
 		Name              string `json:"name" csv:"商品名"`
 		Category          string `json:"category" csv:"種類"`
